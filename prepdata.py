@@ -2,23 +2,35 @@
 import csv
 import pandas as pd
 import numpy as np
+import datetime
 
 filename = "./vishruti_rudolph.csv"
 bigdata = pd.read_csv(filename)
-# bigdata = bigdata.loc[bigdata["Protocol"] == "A2DP"]
+bigdata = bigdata.loc[bigdata["Protocol"] == "L2CAP"]
 
-print(bigdata)
+def convert_to_ts(timestr):
+    x = datetime.datetime.strptime(timestr,'%M:%S.%f')
+    time = x.minute*60+x.second+x.microsecond/1000000
+    return time
+#print(bigdata)
 
-# this is how the spotify paper prepped their data
-def timeseries_prep(bigdata, start_time, end_time, time_step_size):
-    bigdata = bigdata[["Time", "Length"]]
-    smalldata = bigdata.loc[(bigdata['Time'] >= start_time) & (bigdata['Time'] <= end_time)]
-    roundedtimes = smalldata["Time"].apply(lambda x: int(x / time_step_size) * time_step_size)
-    smalldata["Time"] = roundedtimes
-    smalldata = smalldata.groupby(["Time"]).sum()
-    # smalldata.to_csv(index=False, header=False)
-    print(smalldata)
+
+#CLEANS THE DATA
+def timeseries_prep(bigdata, start_time, end_time):
+    int_times = bigdata['Time'].apply(lambda x: convert_to_ts(x))
+    bigdata['IntTimes'] = int_times
+    smalldata = bigdata.loc[(bigdata['IntTimes'] >= start_time) & (bigdata['IntTimes'] <= end_time)]
+    #print(smalldata)
+    return smalldata
     
-# not sure what the correct start and end times are
-timeseries_prep(bigdata, 5000, 263993, 1)
 
+#FOR CURRENT SET
+ya = timeseries_prep(bigdata, 1320, 1400)
+
+#CHOOSE THE TIME STEP YOU WANT TO SEE FREQUENCIES
+def get_freq(data, time_step_size):
+    time_group = data['IntTimes'].apply(lambda x: x//time_step_size)
+    data['group'] = time_group
+    print(data.groupby(['group']).count())
+
+get_freq(ya, .1)
