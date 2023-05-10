@@ -63,5 +63,3 @@ lowf = freq_counts(lowgroup, 1)
 alldata = pd.concat([high, low])
 freqdata = pd.concat([highf, lowf])
 lengthdata = alldata[['Length', 'Value']]
-print(freqdata)
-print(lengthdata)
