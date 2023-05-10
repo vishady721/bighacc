@@ -4,10 +4,17 @@ import csv
 import pandas as pd
 import numpy as np
 import datetime
+from sklearn.linear_model import LogisticRegression
 
-filename = "./vishruti_rudolph.csv"
-bigdata = pd.read_csv(filename)
-bigdata = bigdata.loc[bigdata["Protocol"] == "L2CAP"]
+
+
+high = "./vishruti_rudolph.csv"
+low = "./olo_rudolph.csv"
+highpitch = pd.read_csv(high)
+highpitch = highpitch.loc[highpitch["Protocol"] == "L2CAP"]
+lowpitch = pd.read_csv(low)
+lowpitch = lowpitch.loc[lowpitch["Protocol"] == "L2CAP"]
+
 
 def convert_to_ts(timestr):
     x = datetime.datetime.strptime(timestr,'%M:%S.%f')
@@ -25,8 +32,6 @@ def timeseries_prep(bigdata, start_time, end_time):
     return smalldata
     
 
-#FOR CURRENT SET
-ya = timeseries_prep(bigdata, 1320, 1400)
 
 #CHOOSE THE TIME STEP YOU WANT TO SEE FREQUENCIES
 def get_freq(data, time_step_size):
@@ -46,4 +51,17 @@ def freq_counts(data, person):
     return counts
     
 
-
+#FOR CURRENT SET
+high = timeseries_prep(highpitch, 1320, 1400)
+high = add_person(high, 0)
+low = timeseries_prep(lowpitch, 842, 907)
+low = add_person(low, 1)
+highgroup = get_freq(high, .1)
+lowgroup = get_freq(low, .1)
+highf = freq_counts(highgroup, 0)
+lowf = freq_counts(lowgroup, 1)
+alldata = pd.concat([high, low])
+freqdata = pd.concat([highf, lowf])
+lengthdata = alldata[['Length', 'Value']]
+print(freqdata)
+print(lengthdata)
