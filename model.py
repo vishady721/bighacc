@@ -9,6 +9,8 @@ from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 
+lengthdata = lengthdata.loc[600 <= lengthdata['Length']]
+print(lengthdata.shape)
 
 Xfreq = freqdata[['No.']]
 Xlength = lengthdata[['Length']]
