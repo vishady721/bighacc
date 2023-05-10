@@ -1,4 +1,5 @@
 # take in csv file, output data array
+
 import csv
 import pandas as pd
 import numpy as np
@@ -31,6 +32,18 @@ ya = timeseries_prep(bigdata, 1320, 1400)
 def get_freq(data, time_step_size):
     time_group = data['IntTimes'].apply(lambda x: x//time_step_size)
     data['group'] = time_group
-    print(data.groupby(['group']).count())
+    return data
 
-get_freq(ya, .1)
+#PERSON DATA CORRESPONDS TO
+def add_person(data, person):
+    data['Value'] = person
+    return data
+
+#GET NUMBER OF PACKETS/TIME STEP IN GET_FREQ
+def freq_counts(data, person):
+    counts = data.groupby(['group']).count()[['No.']]
+    counts['Value'] = person
+    return counts
+    
+
+
