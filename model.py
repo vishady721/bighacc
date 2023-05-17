@@ -1,4 +1,4 @@
-from prepdata import freqdata, lengthdata 
+from prepdata import freqdata, lengthdata, lengthfreq, fastdata
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -9,22 +9,30 @@ from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-lengthdata = lengthdata.loc[600 <= lengthdata['Length']]
-print(lengthdata.shape)
 
 Xfreq = freqdata[['No.']]
 Xlength = lengthdata[['Length']]
 Yfreq = freqdata['Value']
 Ylength = lengthdata['Value']
+x = lengthfreq[['Length']]
+y = lengthfreq['Value']
+xf = fastdata[['No.']]
+yf = fastdata['Value']
 
 Xftrain, Xftest, Yftrain, Yftest = train_test_split(Xfreq, Yfreq, test_size=0.2)
 Xltrain, Xltest, Yltrain, Yltest = train_test_split(Xlength, Ylength, test_size=0.2)
+Xlftrain, Xlftest, Ylftrain, Ylftest = train_test_split(x, y, test_size=0.2)
+xtrain, xtest, ytrain, ytest = train_test_split(xf, yf, test_size=0.2)
 
 def fit(model):
     model.fit(Xftrain, Yftrain)
     print(model.score(Xftest, Yftest))
     model.fit(Xltrain, Yltrain)
     print(model.score(Xltest, Yltest))
+    model.fit(Xlftrain, Ylftrain)
+    print(model.score(Xlftest, Ylftest))
+    model.fit(xtrain, ytrain)
+    print(model.score(xtest, ytest))
 
 
 logreg = LogisticRegression()

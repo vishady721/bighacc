@@ -10,10 +10,13 @@ from sklearn.linear_model import LogisticRegression
 
 high = "./vishruti_rudolph.csv"
 low = "./olo_rudolph.csv"
+fast = "./vishrutifast.csv"
 highpitch = pd.read_csv(high)
 highpitch = highpitch.loc[highpitch["Protocol"] == "L2CAP"]
 lowpitch = pd.read_csv(low)
 lowpitch = lowpitch.loc[lowpitch["Protocol"] == "L2CAP"]
+fastpitch = pd.read_csv(fast)
+fastpitch = fastpitch.loc[fastpitch["Protocol"] == "L2CAP"]
 
 
 def convert_to_ts(timestr):
@@ -52,6 +55,12 @@ def freq_counts(data, person):
     
 
 #FOR CURRENT SET
+fast = timeseries_prep(fastpitch, 1810, 1851)
+fast = add_person(fast, 1)
+fastgroup = get_freq(fast, .1)
+fastf = freq_counts(fastgroup, 1)
+
+
 high = timeseries_prep(highpitch, 1320, 1400)
 high = add_person(high, 0)
 low = timeseries_prep(lowpitch, 842, 907)
@@ -62,4 +71,14 @@ highf = freq_counts(highgroup, 0)
 lowf = freq_counts(lowgroup, 1)
 alldata = pd.concat([high, low])
 freqdata = pd.concat([highf, lowf])
-lengthdata = alldata[['Length', 'Value']]
+fastdata = pd.concat([highf, fastf])
+lengthdata = alldata[['Length', 'Value', 'group']]
+
+
+lengthdatah = high[['Length', 'Value', 'group']]
+lengthfreq = lengthdatah.groupby(['group']).sum()
+lengthfreq = add_person(lengthfreq, 0)
+lengthdatal = low[['Length', 'Value', 'group']]
+lengthfreql = lengthdatal.groupby(['group']).sum()
+lengthfreql = add_person(lengthfreql, 1)
+lengthfreq = pd.concat([lengthfreq, lengthfreql])
